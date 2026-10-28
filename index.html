@@ -51,10 +51,10 @@
         </div>
       </section>
 
-      <!-- SECCIÓN 2: HORARIOS (PESTAÑA DEDICADA) -->
+      <!-- SECCIÓN 2: HORARIOS -->
       <section id="sec-horarios" class="hidden space-y-4">
         <h3 class="text-xl font-black text-slate-700">⏰ Gestión de Horarios en Casa</h3>
-        <p class="text-xs text-slate-500">Configura las horas en las que estarás fuera y en casa para una mejor distribución:</p>
+        <p class="text-xs text-slate-500">Configura tus horas de disponibilidad:</p>
         
         <div class="bg-white p-6 rounded-3xl border shadow-sm space-y-4 max-w-lg mx-auto">
           <div class="flex items-center gap-3 pb-3 border-b border-slate-100">
@@ -99,24 +99,29 @@
         <div id="lista-premios" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
       </section>
 
-      <!-- SECCIÓN 5: DESPENSA -->
+      <!-- SECCIÓN 5: DESPENSA (GLOBAL / TODOS LOS PERFILES) -->
       <section id="sec-despensa" class="hidden space-y-4">
         <div class="flex justify-between items-center">
-          <h3 class="text-xl font-black text-slate-700">🛒 Despensa y Súper</h3>
+          <h3 class="text-xl font-black text-slate-700">🛒 Despensa y Súper Compartido</h3>
           <button onclick="abrirModal('modal-despensa')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-2 rounded-xl shadow transition">
             + Producto
           </button>
         </div>
+        <p class="text-xs text-slate-500">Lista sincronizada en tiempo real para todo el hogar:</p>
         <div id="lista-despensa" class="space-y-2"></div>
       </section>
 
-      <!-- SECCIÓN 6: CUENTAS -->
+      <!-- SECCIÓN 6: CUENTAS Y PAGOS (CON BOTONES PENDIENTE / PAGADO) -->
       <section id="sec-cuentas" class="hidden space-y-4">
         <div class="flex justify-between items-center">
           <h3 class="text-xl font-black text-slate-700">💳 Cuentas y Recibos</h3>
           <button onclick="abrirModal('modal-cuenta')" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-3 py-2 rounded-xl shadow transition">
             + Registrar Gasto
           </button>
+        </div>
+        <div class="flex gap-2">
+          <button onclick="filtrarCuentas('Pendiente')" id="btn-filtro-pend" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-500 text-white shadow">Por Pagar</button>
+          <button onclick="filtrarCuentas('Pagado')" id="btn-filtro-pag" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-200 text-slate-600">Pagados</button>
         </div>
         <div id="lista-cuentas" class="space-y-2"></div>
       </section>
@@ -176,7 +181,7 @@
 
   <div id="modal-despensa" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
     <div class="bg-white rounded-3xl p-6 w-full max-w-md space-y-3">
-      <h3 class="font-bold text-slate-800">🛒 Agregar a Despensa</h3>
+      <h3 class="font-bold text-slate-800">🛒 Agregar a Despensa (Global)</h3>
       <input type="text" id="m-esp-nombre" placeholder="Producto (ej. Leche, Huevos)" class="w-full p-2.5 border rounded-xl text-sm">
       <input type="number" id="m-esp-cant" value="1" placeholder="Cantidad" class="w-full p-2.5 border rounded-xl text-sm">
       <div class="flex justify-end gap-2 pt-2">
@@ -212,11 +217,12 @@
   </div>
 
   <script>
-    // URL actualizada de Google Apps Script
-    const API_URL = "https://script.google.com/macros/s/AKfycbzsllzFGQQjzUXFlMwNI5yc1Y0DKFzUZgvoxuU5kaDmF8J6x0s6BTuXvmoTILZfEkyHoQ/exec";
+    // URL activa de Google Apps Script
+    const API_URL = "https://script.google.com/macros/s/AKfycbyrUWLBaXtspvIeBI5rnO1D-cHM7KIBJMVGtYvrgIpmRJ4wbi8Gpb6oGv15sSkCMzQdIQ/exec";
 
     let usuarioActual = null;
     let datosApp = { integrantes: [], tareas: [], notas: [], despensa: [], cuentas: [], recompensas: [] };
+    let filtroCuentasActual = "Pendiente";
 
     window.onload = async function() {
       let cached = localStorage.getItem("hogar_datos_cache");
@@ -346,23 +352,35 @@
         </div>
       `).join("");
 
-      // 5. DESPENSA
+      // 5. DESPENSA (VISIBLE GLOBALMENTE)
       let listD = document.getElementById("lista-despensa");
       let pendienteD = datosApp.despensa.filter(d => d.Estado !== "Comprado");
-      listD.innerHTML = pendienteD.length === 0 ? `<p class="text-xs text-slate-400 text-center py-4">Despensa al día.</p>` : pendienteD.map(d => `
-        <div class="bg-white p-3 rounded-2xl border flex justify-between items-center text-xs">
-          <div><p class="font-bold text-slate-800">${d.Nombre} (${d.Cantidad} ${d.Unidad})</p><p class="text-[10px] text-slate-400">Por: ${d.SolicitadoPor}</p></div>
-          <button onclick="comprarDespensa('${d.ID}')" class="bg-emerald-500 text-white px-2.5 py-1 rounded-lg font-bold">Comprado</button>
+      listD.innerHTML = pendienteD.length === 0 ? `<p class="text-xs text-slate-400 text-center py-4">¡Despensa al día! No hay pendientes.</p>` : pendienteD.map(d => `
+        <div class="bg-white p-3 rounded-2xl border flex justify-between items-center text-xs shadow-sm">
+          <div>
+            <p class="font-bold text-slate-800 text-sm">🛒 ${d.Nombre} (${d.Cantidad} ${d.Unidad})</p>
+            <p class="text-[10px] text-slate-400 mt-0.5">Solicitado por: ${d.SolicitadoPor}</p>
+          </div>
+          <button onclick="comprarDespensa('${d.ID}')" class="bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1.5 rounded-xl font-bold shadow transition">✓ Comprado</button>
         </div>
       `).join("");
 
-      // 6. CUENTAS
+      // 6. CUENTAS (CON FILTROS PENDIENTE / PAGADO)
       let listC = document.getElementById("lista-cuentas");
-      let pendienteC = datosApp.cuentas.filter(c => c.Estado !== "Pagado");
-      listC.innerHTML = pendienteC.length === 0 ? `<p class="text-xs text-slate-400 text-center py-4">Sin cuentas pendientes.</p>` : pendienteC.map(c => `
-        <div class="bg-white p-3 rounded-2xl border flex justify-between items-center text-xs">
-          <div><p class="font-bold text-slate-800">${c.Concepto} - $${c.Importe}</p><p class="text-[10px] text-red-500">Vence: ${c.FechaVencimiento}</p></div>
-          <button onclick="pagarCuenta('${c.ID}')" class="bg-amber-500 text-white px-2.5 py-1 rounded-lg font-bold">Pagar</button>
+      let filtradasC = datosApp.cuentas.filter(c => c.Estado === filtroCuentasActual);
+      
+      listC.innerHTML = filtradasC.length === 0 ? `<p class="text-xs text-slate-400 text-center py-6">No hay cuentas en esta sección.</p>` : filtradasC.map(c => `
+        <div class="bg-white p-3.5 rounded-2xl border flex justify-between items-center text-xs shadow-sm">
+          <div>
+            <p class="font-bold text-slate-800 text-sm">${c.Concepto} - <span class="text-indigo-600">$${c.Importe}</span></p>
+            <p class="text-[10px] text-slate-400 mt-0.5">Vencimiento: ${c.FechaVencimiento} | Responsable: ${c.Responsable}</p>
+          </div>
+          <div>
+            ${filtroCuentasActual === 'Pendiente' ? 
+              `<button onclick="cambiarEstadoCuenta('${c.ID}', 'Pagado')" class="bg-amber-500 hover:bg-amber-600 text-white font-bold px-3 py-1.5 rounded-xl shadow">Marcar Pagado</button>` :
+              `<button onclick="cambiarEstadoCuenta('${c.ID}', 'Pendiente')" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-3 py-1.5 rounded-xl shadow">Volver Pendiente</button>`
+            }
+          </div>
         </div>
       `).join("");
 
@@ -375,6 +393,20 @@
           <p class="text-[10px] text-amber-600 mt-3 pt-2 border-t border-amber-200">Por: ${n.Autor}</p>
         </div>
       `).join("");
+    }
+
+    function filtrarCuentas(estado) {
+      filtroCuentasActual = estado;
+      let btnPend = document.getElementById("btn-filtro-pend");
+      let btnPag = document.getElementById("btn-filtro-pag");
+      if (estado === "Pendiente") {
+        btnPend.className = "px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-500 text-white shadow";
+        btnPag.className = "px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-200 text-slate-600";
+      } else {
+        btnPag.className = "px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-600 text-white shadow";
+        btnPend.className = "px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-200 text-slate-600";
+      }
+      renderApp();
     }
 
     async function guardarMiHorario() {
@@ -469,11 +501,11 @@
       await sincronizarDatos();
     }
 
-    async function pagarCuenta(id) {
+    async function cambiarEstadoCuenta(idCuenta, nuevoEstado) {
       await fetch(API_URL, {
         method: "POST",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify({ action: "pagarCuenta", idCuenta: id })
+        body: JSON.stringify({ action: "actualizarEstadoCuenta", idCuenta: idCuenta, nuevoEstado: nuevoEstado })
       });
       await sincronizarDatos();
     }
