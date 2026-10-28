@@ -377,4 +377,81 @@
       }
     }
 
-    function abrirModal(
+    function abrirModal(id) { document.getElementById(id).classList.remove("hidden"); }
+    function cerrarModal(id) { document.getElementById(id).classList.add("hidden"); }
+
+    async function guardarTareaManual() {
+      let nombre = document.getElementById("m-tarea-nombre").value;
+      let asignadoA = document.getElementById("m-tarea-asignado").value;
+      let puntos = document.getElementById("m-tarea-puntos").value;
+      if(!nombre) return alert("Escribe un nombre");
+      
+      await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ action: "agregarTareaManual", nombre, asignadoA, puntos })
+      });
+      cerrarModal('modal-tarea');
+      await sincronizarDatos();
+    }
+
+    async function guardarDespensa() {
+      let nombre = document.getElementById("m-esp-nombre").value;
+      let cantidad = document.getElementById("m-esp-cant").value;
+      if(!nombre) return;
+      await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ action: "agregarDespensa", nombre, cantidad, solicitadoPor: usuarioActual.Nombre })
+      });
+      cerrarModal('modal-despensa');
+      await sincronizarDatos();
+    }
+
+    async function comprarDespensa(id) {
+      await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ action: "comprarDespensa", idProducto: id })
+      });
+      await sincronizarDatos();
+    }
+
+    async function guardarCuenta() {
+      let concepto = document.getElementById("m-cta-concepto").value;
+      let importe = document.getElementById("m-cta-importe").value;
+      let fechaVencimiento = document.getElementById("m-cta-fecha").value;
+      if(!concepto || !importe) return;
+      await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ action: "guardarCuenta", concepto, importe, fechaVencimiento, responsable: usuarioActual.Nombre })
+      });
+      cerrarModal('modal-cuenta');
+      await sincronizarDatos();
+    }
+
+    async function pagarCuenta(id) {
+      await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ action: "pagarCuenta", idCuenta: id })
+      });
+      await sincronizarDatos();
+    }
+
+    async function guardarNota() {
+      let titulo = document.getElementById("m-nota-titulo").value;
+      let contenido = document.getElementById("m-nota-contenido").value;
+      if(!titulo || !contenido) return;
+      await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ action: "agregarNota", titulo, contenido, creador: usuarioActual.Nombre })
+      });
+      cerrarModal('modal-nota');
+      await sincronizarDatos();
+    }
+  </script>
+</body>
+</html>
