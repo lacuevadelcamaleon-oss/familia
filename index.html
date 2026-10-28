@@ -112,6 +112,7 @@
         <div>
           <label class="text-xs font-bold text-slate-600">Asignar a:</label>
           <select id="tarea-asignado" class="w-full mt-1 p-2.5 border rounded-xl text-sm bg-white">
+            <option value="AUTO" selected>✨ Asignar Automáticamente (Rotativo)</option>
             <option value="Julián">Julián</option>
             <option value="Verónica">Verónica</option>
             <option value="Alejandra">Alejandra</option>
@@ -175,8 +176,8 @@
   </div>
 
   <script>
-    // Tu URL actual de Google Apps Script vinculada
-    const API_URL = "https://script.google.com/macros/s/AKfycbwshB9TA9PjCWcps-Zv8T_TdK4_Ghu8kxbJs8Ywgl3uvYx7TOHT1_16Df_Lf200ZjFNNg/exec";
+    // URL de Apps Script sincronizada
+    const API_URL = "https://script.google.com/macros/s/AKfycbzTve2A-ZCd-nSrExt0Xaq7u7nHzSLy40UgNTUBNT-_XVbkYv15fxKrjohezHacf9M9Nw/exec";
 
     const integrantesDefault = [
       { id: 1, nombre: "Verónica", rol: "Adulto", avatar: "👩‍👧", puntos: 0 },
@@ -360,8 +361,7 @@
           asignadoA: asignadoA,
           prioridad: prioridad,
           horario: horario,
-          puntos: puntos,
-          requiereValidacion: (asignadoA === "Liam" || asignadoA === "Manuel")
+          puntos: puntos
         })
       });
 
@@ -382,7 +382,6 @@
         body: JSON.stringify({
           action: "agregarNota",
           creador: usuarioActual.nombre,
-          visibilidad: "Toda la Casa",
           titulo: titulo,
           contenido: contenido
         })
