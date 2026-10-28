@@ -201,7 +201,6 @@
   </div>
 
   <script>
-    // URL de Apps Script sincronizada con tu último despliegue
     const API_URL = "https://script.google.com/macros/s/AKfycbwtw4Ox950LWkdUTOiOxVfvqKgO4eXGTDMV05CKHXbzY5eldQSSpyBl3f5d5JG37NuJDw/exec";
 
     const integrantesDefault = [
@@ -294,7 +293,7 @@
         `;
       } else {
         listaTareas.innerHTML = misTareas.map(t => `
-          <div class="bg-white p-4 rounded-2xl shadow-sm border-l-4 ${getPrioridadColor(t.Prioridad)} flex justify-between items-center">
+          <div id="tarea-${t.ID_Tarea}" class="bg-white p-4 rounded-2xl shadow-sm border-l-4 ${getPrioridadColor(t.Prioridad)} flex justify-between items-center transition-all">
             <div>
               <div class="flex items-center gap-2">
                 <span class="font-bold text-slate-800">${t.Nombre_Tarea}</span>
@@ -302,7 +301,7 @@
               </div>
               <p class="text-xs text-slate-500 mt-1">⏰ ${t.Horario} | Recompensa: +${t.Puntos_Otorgados} pts</p>
             </div>
-            <button onclick="completarTarea('${t.ID_Tarea}')" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-3 py-1.5 rounded-xl text-xs shadow transition">
+            <button onclick="completarTarea('${t.ID_Tarea}', ${t.Puntos_Otorgados})" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-3 py-1.5 rounded-xl text-xs shadow transition">
               ✓ Listo
             </button>
           </div>
@@ -380,7 +379,21 @@
       return "border-emerald-500";
     }
 
-    async function completarTarea(idTarea) {
+    async function completarTarea(idTarea, puntosBono) {
+      // Eliminar visualmente de inmediato para mejorar la experiencia de usuario
+      const elementoTarea = document.getElementById(`tarea-${idTarea}`);
+      if (elementoTarea) {
+        elementoTarea.style.opacity = '0';
+        setTimeout(() => elementoTarea.remove(), 300);
+      }
+
+      // Actualizar puntos en pantalla temporalmente
+      const intBD = datosServidor.integrantes.find(i => i.Nombre === usuarioActual.nombre);
+      if (intBD) {
+        intBD.PuntosAcumulados = (Number(intBD.PuntosAcumulados) || 0) + puntosBono;
+        document.getElementById("user-puntos").innerText = `⭐ ${intBD.PuntosAcumulados} Puntos`;
+      }
+
       const estado = (usuarioActual.rol === "Niño") ? "En Revisión" : "Completada";
       try {
         await fetch(API_URL, {
@@ -388,6 +401,7 @@
           headers: { "Content-Type": "text/plain;charset=utf-8" },
           body: JSON.stringify({ action: "completarTarea", idTarea: idTarea, nuevoEstado: estado })
         });
+        // Sincronizar de fondo con el servidor
         await cargarDatosServidor();
       } catch (e) {
         console.error("Error al completar la tarea", e);
