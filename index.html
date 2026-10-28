@@ -16,8 +16,9 @@
       <h1 class="text-2xl font-black text-slate-800 mt-2">Hogar Inteligente</h1>
       <p class="text-xs text-slate-500 mt-1 mb-6">Selecciona quién eres para ingresar:</p>
       <div class="grid grid-cols-2 gap-3 max-h-80 overflow-y-auto p-1" id="grid-usuarios">
-        <p class="text-xs text-slate-400 col-span-2 py-4">Cargando perfiles...</p>
+        <p class="text-xs text-slate-400 col-span-2 py-4 animate-pulse">Cargando perfiles desde el servidor...</p>
       </div>
+      <button onclick="sincronizarDatos(true)" class="mt-4 text-xs text-indigo-600 hover:underline font-bold">↻ Reintentar conexión</button>
     </div>
   </div>
 
@@ -217,49 +218,51 @@
   </div>
 
   <script>
-    // URL de tu Apps Script actual sincronizada
     const API_URL = "https://script.google.com/macros/s/AKfycbyG4_UgsqE6QPWY1AaimXz8i-OIYxivAuXPvOdn3wHErl92wYZB5Eudh5j4SLqAtV39/exec";
 
     let usuarioActual = null;
     let datosApp = { integrantes: [], tareas: [], notas: [], despensa: [], cuentas: [], recompensas: [] };
     let filtroCuentasActual = "Pendiente";
 
-    window.onload = async function() {
-      let versionApp = "v3_robust";
-      if (localStorage.getItem("hogar_version") !== versionApp) {
-        localStorage.clear();
-        localStorage.setItem("hogar_version", versionApp);
-      }
-
-      let cached = localStorage.getItem("hogar_datos_cache");
-      if (cached) {
-        datosApp = JSON.parse(cached);
-        renderLogin();
-      }
-      await sincronizarDatos();
+    window.onload = function() {
+      sincronizarDatos();
     };
 
-    async function sincronizarDatos() {
+    async function sincronizarDatos(forzar = false) {
+      let grid = document.getElementById("grid-usuarios");
+      if (forzar || !datosApp.integrantes || datosApp.integrantes.length === 0) {
+        grid.innerHTML = `<p class="text-xs text-slate-400 col-span-2 py-4 animate-pulse">Conectando con el servidor...</p>`;
+      }
+
       try {
         let res = await fetch(API_URL);
+        if (!res.ok) throw new Error("HTTP error " + res.status);
         let json = await res.json();
         if (json.status === "success") {
           datosApp = json;
-          localStorage.setItem("hogar_datos_cache", JSON.stringify(datosApp));
           renderLogin();
           if (usuarioActual) {
             usuarioActual = datosApp.integrantes.find(i => i.Nombre === usuarioActual.Nombre) || usuarioActual;
             renderApp();
           }
+        } else {
+          throw new Error(json.message || "Error en datos");
         }
       } catch (e) {
-        console.warn("Error de red", e);
+        console.error("Error sincronizando:", e);
+        grid.innerHTML = `
+          <div class="col-span-2 p-3 bg-red-50 text-red-600 rounded-2xl text-xs">
+            <p class="font-bold">⚠️ Error de Conexión</p>
+            <p class="mt-1 text-[11px]">${e.message}</p>
+            <p class="mt-2 text-[10px] text-slate-500">Verifica los permisos del desplegable en Google Apps Script (debe decir "Cualquier usuario").</p>
+          </div>
+        `;
       }
     }
 
     function renderLogin() {
       let grid = document.getElementById("grid-usuarios");
-      if(datosApp.integrantes.length === 0) return;
+      if(!datosApp.integrantes || datosApp.integrantes.length === 0) return;
       grid.innerHTML = datosApp.integrantes.map(u => `
         <button onclick="seleccionarUsuario('${u.Nombre}')" class="flex flex-col items-center p-3 bg-slate-50 hover:bg-indigo-50 border rounded-2xl transition shadow-sm">
           <span class="text-3xl">${u.Avatar}</span>
@@ -358,7 +361,7 @@
         </div>
       `).join("");
 
-      // 5. DESPENSA (VISIBLE GLOBALMENTE)
+      // 5. DESPENSA
       let listD = document.getElementById("lista-despensa");
       let pendienteD = datosApp.despensa.filter(d => d.Estado !== "Comprado");
       listD.innerHTML = pendienteD.length === 0 ? `<p class="text-xs text-slate-400 text-center py-4">¡Despensa al día! No hay pendientes.</p>` : pendienteD.map(d => `
@@ -371,7 +374,7 @@
         </div>
       `).join("");
 
-      // 6. CUENTAS (CON FILTROS PENDIENTE / PAGADO)
+      // 6. CUENTAS
       let listC = document.getElementById("lista-cuentas");
       let filtradasC = datosApp.cuentas.filter(c => c.Estado === filtroCuentasActual);
       
@@ -425,7 +428,7 @@
         body: JSON.stringify({ action: "guardarHorarioUsuario", usuario: usuarioActual.Nombre, horaSalida: hSalida, horaRegreso: hRegreso })
       });
       alert("¡Horario actualizado con éxito!");
-      await sincronizarDatos();
+      await sincronizarDatos(true);
     }
 
     async function completarTarea(idTarea, puntos) {
@@ -437,7 +440,7 @@
         headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify({ action: "completarTarea", idTarea: idTarea, usuario: usuarioActual.Nombre })
       });
-      await sincronizarDatos();
+      await sincronizarDatos(true);
     }
 
     async function canjearPremios(nombre, costo) {
@@ -449,7 +452,7 @@
           body: JSON.stringify({ action: "canjearRecompensa", usuario: usuarioActual.Nombre, nombreRecompensa: nombre, costo: costo })
         });
         alert("¡Canje exitoso!");
-        await sincronizarDatos();
+        await sincronizarDatos(true);
       }
     }
 
@@ -468,7 +471,7 @@
         body: JSON.stringify({ action: "agregarTareaManual", nombre, asignadoA, puntos })
       });
       cerrarModal('modal-tarea');
-      await sincronizarDatos();
+      await sincronizarDatos(true);
     }
 
     async function guardarDespensa() {
@@ -481,7 +484,7 @@
         body: JSON.stringify({ action: "agregarDespensa", nombre, cantidad, solicitadoPor: usuarioActual.Nombre })
       });
       cerrarModal('modal-despensa');
-      await sincronizarDatos();
+      await sincronizarDatos(true);
     }
 
     async function comprarDespensa(id) {
@@ -490,7 +493,7 @@
         headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify({ action: "comprarDespensa", idProducto: id })
       });
-      await sincronizarDatos();
+      await sincronizarDatos(true);
     }
 
     async function guardarCuenta() {
@@ -504,7 +507,7 @@
         body: JSON.stringify({ action: "guardarCuenta", concepto, importe, fechaVencimiento, responsable: usuarioActual.Nombre })
       });
       cerrarModal('modal-cuenta');
-      await sincronizarDatos();
+      await sincronizarDatos(true);
     }
 
     async function cambiarEstadoCuenta(idCuenta, nuevoEstado) {
@@ -513,7 +516,7 @@
         headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify({ action: "actualizarEstadoCuenta", idCuenta: idCuenta, nuevoEstado: nuevoEstado })
       });
-      await sincronizarDatos();
+      await sincronizarDatos(true);
     }
 
     async function guardarNota() {
@@ -526,7 +529,7 @@
         body: JSON.stringify({ action: "agregarNota", titulo, contenido, creador: usuarioActual.Nombre })
       });
       cerrarModal('modal-nota');
-      await sincronizarDatos();
+      await sincronizarDatos(true);
     }
   </script>
 </body>
