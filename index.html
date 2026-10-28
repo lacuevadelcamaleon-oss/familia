@@ -201,7 +201,8 @@
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbwtw4Ox950LWkdUTOiOxVfvqKgO4eXGTDMV05CKHXbzY5eldQSSpyBl3f5d5JG37NuJDw/exec";
+    // URL de Apps Script sincronizada con tu último despliegue
+    const API_URL = "https://script.google.com/macros/s/AKfycbw0YGCkFRfa4zSHY30SG8ArljdvLi2N4Iunq0ro9z6pEyDINUnFAAYv3PFshxpdylcz/exec";
 
     const integrantesDefault = [
       { id: 1, nombre: "Verónica", rol: "Adulto", avatar: "👩‍👧", puntos: 0 },
@@ -380,7 +381,7 @@
     }
 
     async function completarTarea(idTarea, puntosBono) {
-      // Eliminar visualmente de inmediato para mejorar la experiencia de usuario
+      // Eliminar visualmente de inmediato
       const elementoTarea = document.getElementById(`tarea-${idTarea}`);
       if (elementoTarea) {
         elementoTarea.style.opacity = '0';
@@ -401,7 +402,6 @@
           headers: { "Content-Type": "text/plain;charset=utf-8" },
           body: JSON.stringify({ action: "completarTarea", idTarea: idTarea, nuevoEstado: estado })
         });
-        // Sincronizar de fondo con el servidor
         await cargarDatosServidor();
       } catch (e) {
         console.error("Error al completar la tarea", e);
