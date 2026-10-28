@@ -118,6 +118,11 @@
         <label class="text-xs font-bold text-slate-600">Selecciona tarea o escribe una personalizada:</label>
         <select id="select-tarea-predefinida" onchange="seleccionarTareaPreset(this)" class="w-full mt-1 p-2.5 border rounded-xl text-sm bg-white mb-2">
           <option value="">-- Elige una tarea común o escribe abajo --</option>
+          <option value="Recoger juguetes">🧸 Recoger juguetes</option>
+          <option value="Ordenar cuarto">🛏️ Ordenar cuarto</option>
+          <option value="Lectura de 20 min">📚 Lectura de 20 min</option>
+          <option value="Bañarse a tiempo">🚿 Bañarse a tiempo</option>
+          <option value="Preparar mochila para mañana">🎒 Preparar mochila para mañana</option>
           <option value="Dar de comer a los perros">🐶 Dar de comer a los perros</option>
           <option value="Sacar a pasear a los perros">🦮 Sacar a pasear a los perros</option>
           <option value="Ordenar sala">🛋️ Ordenar sala</option>
@@ -126,11 +131,6 @@
           <option value="Limpiar patio">🌿 Limpiar patio</option>
           <option value="Limpiar cochera">🚗 Limpiar cochera</option>
           <option value="Sacar la basura y botes">🗑️ Sacar la basura y botes</option>
-          <option value="Regar plantas y jardín">🌱 Regar plantas y jardín</option>
-          <option value="Limpiar cristales y ventanas">🪟 Limpiar cristales y ventanas</option>
-          <option value="Lavar y doblar ropa acumulada">🧺 Lavar y doblar ropa acumulada</option>
-          <option value="Preparar mochila para mañana">🎒 Preparar mochila para mañana</option>
-          <option value="Lectura de 20 min (sin pantallas)">📚 Lectura de 20 min (sin pantallas)</option>
         </select>
         <input type="text" id="tarea-nombre" placeholder="O escribe otra tarea personalizada..." class="w-full p-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-indigo-500">
       </div>
@@ -202,7 +202,7 @@
 
   <script>
     // URL de Apps Script sincronizada con tu último despliegue
-    const API_URL = "https://script.google.com/macros/s/AKfycbw0YGCkFRfa4zSHY30SG8ArljdvLi2N4Iunq0ro9z6pEyDINUnFAAYv3PFshxpdylcz/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbxzdF4BRq7q58POCHxdpdFG4x7trhNDjMQYmNR4c0xK2D7A2jbSl0Xv5wlhUm0zRowt2A/exec";
 
     const integrantesDefault = [
       { id: 1, nombre: "Verónica", rol: "Adulto", avatar: "👩‍👧", puntos: 0 },
