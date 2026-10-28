@@ -19,14 +19,15 @@
       </div>
       
       <div class="grid grid-cols-2 gap-3" id="contenedor-usuarios">
-        <!-- Perfiles -->
+        <!-- Carga dinámica de perfiles -->
       </div>
     </div>
   </div>
 
   <!-- PANTALLA PRINCIPAL -->
   <div id="pantalla-app" class="hidden min-h-screen flex flex-col">
-    <header class="bg-indigo-600 text-white p-4 shadow-lg flex justify-between items-center sticky top-0 z-50">
+    <!-- Navbar Top -->
+    <header class="bg-indigo-600 text-white p-4 shadow-lg flex justify-between items-center sticky top-0 z-40">
       <div class="flex items-center gap-3">
         <span id="user-avatar" class="text-3xl">👤</span>
         <div>
@@ -39,7 +40,10 @@
       </button>
     </header>
 
+    <!-- Contenido Principal -->
     <main class="flex-1 p-4 max-w-3xl mx-auto w-full mb-20">
+      
+      <!-- SECCIÓN 1: MIS OBLIGACIONES -->
       <section id="sec-tareas" class="space-y-4">
         <div class="flex justify-between items-center">
           <h3 class="text-xl font-black text-slate-700">Mis Obligaciones</h3>
@@ -47,11 +51,13 @@
             + Nueva Tarea
           </button>
         </div>
+
         <div id="lista-mis-tareas" class="space-y-3">
           <p class="text-xs text-slate-400 text-center py-6">Cargando tareas...</p>
         </div>
       </section>
 
+      <!-- SECCIÓN 2: DASHBOARD FAMILIAR -->
       <section id="sec-general" class="hidden space-y-4">
         <h3 class="text-xl font-black text-slate-700">Pizarra Familiar</h3>
         <p class="text-xs text-slate-500">Resumen de avance de todos los integrantes:</p>
@@ -60,6 +66,7 @@
         </div>
       </section>
 
+      <!-- SECCIÓN 3: NOTAS Y SÚPER -->
       <section id="sec-notas" class="hidden space-y-4">
         <div class="flex justify-between items-center">
           <h3 class="text-xl font-black text-slate-700">Notas y Pizarra</h3>
@@ -71,9 +78,11 @@
           <p class="text-xs text-slate-400 text-center col-span-2 py-6">Cargando notas...</p>
         </div>
       </section>
+
     </main>
 
-    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 flex justify-around py-3 text-center text-xs font-medium text-slate-500 z-50">
+    <!-- NAVBAR INFERIOR -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 flex justify-around py-3 text-center text-xs font-medium text-slate-500 z-40">
       <button onclick="cambiarSeccion('sec-tareas', this)" class="btn-nav flex flex-col items-center text-indigo-600">
         <i class="fa-solid fa-list-check text-xl mb-1"></i>
         <span>Mis Tareas</span>
@@ -89,9 +98,85 @@
     </nav>
   </div>
 
+  <!-- MODAL: CREAR NUEVA TAREA -->
+  <div id="modal-tarea" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl space-y-4">
+      <h3 class="text-lg font-bold text-slate-800">➕ Crear Nueva Tarea</h3>
+      
+      <div>
+        <label class="text-xs font-bold text-slate-600">Nombre de la tarea:</label>
+        <input type="text" id="tarea-nombre" placeholder="Ej. Sacar la basura" class="w-full mt-1 p-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-indigo-500">
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="text-xs font-bold text-slate-600">Asignar a:</label>
+          <select id="tarea-asignado" class="w-full mt-1 p-2.5 border rounded-xl text-sm bg-white">
+            <option value="Julián">Julián</option>
+            <option value="Verónica">Verónica</option>
+            <option value="Alejandra">Alejandra</option>
+            <option value="Alberto">Alberto</option>
+            <option value="Liam">Liam</option>
+            <option value="Manuel">Manuel</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-xs font-bold text-slate-600">Prioridad:</label>
+          <select id="tarea-prioridad" class="w-full mt-1 p-2.5 border rounded-xl text-sm bg-white">
+            <option value="Alta">🔴 Alta</option>
+            <option value="Media" selected>🟡 Media</option>
+            <option value="Baja">🟢 Baja</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="text-xs font-bold text-slate-600">Horario:</label>
+          <select id="tarea-horario" class="w-full mt-1 p-2.5 border rounded-xl text-sm bg-white">
+            <option value="Mañana">Mañana</option>
+            <option value="Tarde">Tarde</option>
+            <option value="Noche">Noche</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-xs font-bold text-slate-600">Puntos (Bono):</label>
+          <input type="number" id="tarea-puntos" value="10" class="w-full mt-1 p-2.5 border rounded-xl text-sm">
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2 pt-2">
+        <button onclick="cerrarModalTarea()" class="px-4 py-2 text-xs font-bold text-slate-500 hover:bg-slate-100 rounded-xl">Cancelar</button>
+        <button onclick="guardarTareaWeb()" class="px-4 py-2 text-xs font-bold bg-indigo-600 text-white rounded-xl shadow hover:bg-indigo-700">Guardar Tarea</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: CREAR NOTA / SÚPER -->
+  <div id="modal-nota" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl space-y-4">
+      <h3 class="text-lg font-bold text-slate-800">📝 Agregar Nota / Pizarra</h3>
+      
+      <div>
+        <label class="text-xs font-bold text-slate-600">Título:</label>
+        <input type="text" id="nota-titulo" placeholder="Ej. Compras del Súper" class="w-full mt-1 p-2.5 border rounded-xl text-sm">
+      </div>
+
+      <div>
+        <label class="text-xs font-bold text-slate-600">Contenido:</label>
+        <textarea id="nota-contenido" rows="3" placeholder="Ej. Leche, huevos, fruta..." class="w-full mt-1 p-2.5 border rounded-xl text-sm"></textarea>
+      </div>
+
+      <div class="flex justify-end gap-2 pt-2">
+        <button onclick="cerrarModalNota()" class="px-4 py-2 text-xs font-bold text-slate-500 hover:bg-slate-100 rounded-xl">Cancelar</button>
+        <button onclick="guardarNotaWeb()" class="px-4 py-2 text-xs font-bold bg-purple-600 text-white rounded-xl shadow hover:bg-purple-700">Publicar Nota</button>
+      </div>
+    </div>
+  </div>
+
   <script>
-    // URL de tu Google Apps Script ya integrada
-    const API_URL = "https://script.google.com/macros/s/AKfycbzCm6A5bq0rjwtsfr5kbR1NtwjEVql0HDTTyrnalkPkDnS0oLUjsoZL2UmI0NMSuQFnBQ/exec";
+    // Tu URL actual de Google Apps Script vinculada
+    const API_URL = "https://script.google.com/macros/s/AKfycbwshB9TA9PjCWcps-Zv8T_TdK4_Ghu8kxbJs8Ywgl3uvYx7TOHT1_16Df_Lf200ZjFNNg/exec";
 
     const integrantesDefault = [
       { id: 1, nombre: "Verónica", rol: "Adulto", avatar: "👩‍👧", puntos: 0 },
@@ -148,7 +233,7 @@
 
     async function cargarDatosServidor() {
       try {
-        const res = await fetch(`${API_URL}?action=getInicial`);
+        const res = await fetch(API_URL);
         if (res.ok) {
           const data = await res.json();
           if (data.tareas) datosServidor.tareas = data.tareas;
@@ -245,28 +330,68 @@
           headers: { "Content-Type": "text/plain;charset=utf-8" },
           body: JSON.stringify({ action: "completarTarea", idTarea: idTarea, nuevoEstado: estado })
         });
-        const tarea = datosServidor.tareas.find(t => t.ID_Tarea === idTarea);
-        if (tarea) tarea.Estado = estado;
-        renderPantallas();
+        await cargarDatosServidor();
       } catch (e) {
         console.error("Error al completar la tarea", e);
       }
     }
 
-    function abrirModalTarea() {
-      alert("Para agregar una tarea regístrala directamente en tu hoja de Google Sheets en la pestaña 'Tareas'.");
+    // MODALES
+    function abrirModalTarea() { document.getElementById("modal-tarea").classList.remove("hidden"); }
+    function cerrarModalTarea() { document.getElementById("modal-tarea").classList.add("hidden"); }
+    function abrirModalNota() { document.getElementById("modal-nota").classList.remove("hidden"); }
+    function cerrarModalNota() { document.getElementById("modal-nota").classList.add("hidden"); }
+
+    async function guardarTareaWeb() {
+      const nombre = document.getElementById("tarea-nombre").value;
+      const asignadoA = document.getElementById("tarea-asignado").value;
+      const prioridad = document.getElementById("tarea-prioridad").value;
+      const horario = document.getElementById("tarea-horario").value;
+      const puntos = document.getElementById("tarea-puntos").value;
+
+      if (!nombre) return alert("Por favor escribe el nombre de la tarea.");
+
+      await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+          action: "agregarTarea",
+          nombre: nombre,
+          asignadoA: asignadoA,
+          prioridad: prioridad,
+          horario: horario,
+          puntos: puntos,
+          requiereValidacion: (asignadoA === "Liam" || asignadoA === "Manuel")
+        })
+      });
+
+      document.getElementById("tarea-nombre").value = "";
+      cerrarModalTarea();
+      await cargarDatosServidor();
     }
 
-    function abrirModalNota() {
-      const titulo = prompt("Título de la nota:");
-      const contenido = prompt("Contenido de la nota:");
-      if (titulo && contenido) {
-        fetch(API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify({ action: "agregarNota", creador: usuarioActual.nombre, visibilidad: "Toda la Casa", titulo: titulo, contenido: contenido })
-        }).then(() => cargarDatosServidor());
-      }
+    async function guardarNotaWeb() {
+      const titulo = document.getElementById("nota-titulo").value;
+      const contenido = document.getElementById("nota-contenido").value;
+
+      if (!titulo || !contenido) return alert("Por favor completa el título y contenido.");
+
+      await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+          action: "agregarNota",
+          creador: usuarioActual.nombre,
+          visibilidad: "Toda la Casa",
+          titulo: titulo,
+          contenido: contenido
+        })
+      });
+
+      document.getElementById("nota-titulo").value = "";
+      document.getElementById("nota-contenido").value = "";
+      cerrarModalNota();
+      await cargarDatosServidor();
     }
 
     window.onload = inicializar;
