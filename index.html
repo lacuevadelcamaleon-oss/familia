@@ -9,7 +9,7 @@
 </head>
 <body class="bg-slate-100 text-slate-800 font-sans min-h-screen">
 
-  <!-- PANTALLA DE SELECCIÓN DE USUARIO -->
+  <!-- PANTALLA DE LOGIN -->
   <div id="pantalla-login" class="flex flex-col items-center justify-center min-h-screen p-4 bg-gradient-to-br from-indigo-600 to-purple-700">
     <div class="bg-white rounded-3xl shadow-2xl p-6 w-full max-w-md text-center">
       <div class="mb-6">
@@ -19,14 +19,13 @@
       </div>
       
       <div class="grid grid-cols-2 gap-3" id="contenedor-usuarios">
-        <!-- Carga dinámica de perfiles -->
+        <!-- Carga dinámica -->
       </div>
     </div>
   </div>
 
-  <!-- PANTALLA PRINCIPAL -->
+  <!-- APP PRINCIPAL -->
   <div id="pantalla-app" class="hidden min-h-screen flex flex-col">
-    <!-- Navbar Top -->
     <header class="bg-indigo-600 text-white p-4 shadow-lg flex justify-between items-center sticky top-0 z-40">
       <div class="flex items-center gap-3">
         <span id="user-avatar" class="text-3xl">👤</span>
@@ -40,7 +39,6 @@
       </button>
     </header>
 
-    <!-- Contenido Principal -->
     <main class="flex-1 p-4 max-w-3xl mx-auto w-full mb-20">
       
       <!-- SECCIÓN 1: MIS OBLIGACIONES -->
@@ -57,16 +55,25 @@
         </div>
       </section>
 
-      <!-- SECCIÓN 2: DASHBOARD FAMILIAR -->
+      <!-- SECCIÓN 2: DASHBOARD FAMILIAR & LEADERBOARD -->
       <section id="sec-general" class="hidden space-y-4">
-        <h3 class="text-xl font-black text-slate-700">Pizarra Familiar</h3>
-        <p class="text-xs text-slate-500">Resumen de avance de todos los integrantes:</p>
+        <h3 class="text-xl font-black text-slate-700">Pizarra y Ranking</h3>
+        <p class="text-xs text-slate-500">Avance y tabla de clasificación:</p>
         <div id="tablon-familia" class="space-y-3">
           <p class="text-xs text-slate-400 text-center py-6">Cargando estado del hogar...</p>
         </div>
       </section>
 
-      <!-- SECCIÓN 3: NOTAS Y SÚPER -->
+      <!-- SECCIÓN 3: RECOMPENSAS / TIENDA -->
+      <section id="sec-recompensas" class="hidden space-y-4">
+        <h3 class="text-xl font-black text-slate-700">🎁 Tienda de Recompensas</h3>
+        <p class="text-xs text-slate-500">Canjea tus puntos por premios:</p>
+        <div id="contenedor-recompensas" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <p class="text-xs text-slate-400 text-center col-span-2 py-6">Cargando catálogo...</p>
+        </div>
+      </section>
+
+      <!-- SECCIÓN 4: NOTAS -->
       <section id="sec-notas" class="hidden space-y-4">
         <div class="flex justify-between items-center">
           <h3 class="text-xl font-black text-slate-700">Notas y Pizarra</h3>
@@ -88,8 +95,12 @@
         <span>Mis Tareas</span>
       </button>
       <button onclick="cambiarSeccion('sec-general', this)" class="btn-nav flex flex-col items-center hover:text-indigo-600">
-        <i class="fa-solid fa-house-user text-xl mb-1"></i>
-        <span>Pizarra Casa</span>
+        <i class="fa-solid fa-trophy text-xl mb-1"></i>
+        <span>Ranking</span>
+      </button>
+      <button onclick="cambiarSeccion('sec-recompensas', this)" class="btn-nav flex flex-col items-center hover:text-indigo-600">
+        <i class="fa-solid fa-gift text-xl mb-1"></i>
+        <span>Premios</span>
       </button>
       <button onclick="cambiarSeccion('sec-notas', this)" class="btn-nav flex flex-col items-center hover:text-indigo-600">
         <i class="fa-solid fa-clipboard-list text-xl mb-1"></i>
@@ -98,25 +109,42 @@
     </nav>
   </div>
 
-  <!-- MODAL: CREAR NUEVA TAREA -->
+  <!-- MODAL: TAREA NUEVA -->
   <div id="modal-tarea" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
     <div class="bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl space-y-4">
-      <h3 class="text-lg font-bold text-slate-800">➕ Crear Nueva Tarea</h3>
+      <h3 class="text-lg font-bold text-slate-800">➕ Asignar Tarea</h3>
       
       <div>
-        <label class="text-xs font-bold text-slate-600">Nombre de la tarea:</label>
-        <input type="text" id="tarea-nombre" placeholder="Ej. Sacar la basura" class="w-full mt-1 p-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-indigo-500">
+        <label class="text-xs font-bold text-slate-600">Selecciona tarea o escribe una personalizada:</label>
+        <select id="select-tarea-predefinida" onchange="seleccionarTareaPreset(this)" class="w-full mt-1 p-2.5 border rounded-xl text-sm bg-white mb-2">
+          <option value="">-- Elige una tarea común o escribe abajo --</option>
+          <option value="Dar de comer a los perros">🐶 Dar de comer a los perros</option>
+          <option value="Sacar a pasear a los perros">🦮 Sacar a pasear a los perros</option>
+          <option value="Ordenar sala">🛋️ Ordenar sala</option>
+          <option value="Ordenar cocina">🍳 Ordenar cocina</option>
+          <option value="Ordenar baños">🚽 Ordenar baños</option>
+          <option value="Limpiar patio">🌿 Limpiar patio</option>
+          <option value="Limpiar cochera">🚗 Limpiar cochera</option>
+          <option value="Sacar la basura y botes">🗑️ Sacar la basura y botes</option>
+          <option value="Regar plantas y jardín">🌱 Regar plantas y jardín</option>
+          <option value="Limpiar cristales y ventanas">🪟 Limpiar cristales y ventanas</option>
+          <option value="Lavar y doblar ropa acumulada">🧺 Lavar y doblar ropa acumulada</option>
+          <option value="Preparar mochila para mañana">🎒 Preparar mochila para mañana</option>
+          <option value="Lectura de 20 min (sin pantallas)">📚 Lectura de 20 min (sin pantallas)</option>
+        </select>
+        <input type="text" id="tarea-nombre" placeholder="O escribe otra tarea personalizada..." class="w-full p-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-indigo-500">
       </div>
 
       <div class="grid grid-cols-2 gap-3">
         <div>
           <label class="text-xs font-bold text-slate-600">Asignar a:</label>
           <select id="tarea-asignado" class="w-full mt-1 p-2.5 border rounded-xl text-sm bg-white">
-            <option value="AUTO" selected>✨ Asignar Automáticamente (Rotativo)</option>
-            <option value="Julián">Julián</option>
+            <option value="AUTO" selected>✨ Automático (Rotativo)</option>
             <option value="Verónica">Verónica</option>
             <option value="Alejandra">Alejandra</option>
             <option value="Alberto">Alberto</option>
+            <option value="Julián">Julián</option>
+            <option value="Esperanza">Esperanza</option>
             <option value="Liam">Liam</option>
             <option value="Manuel">Manuel</option>
           </select>
@@ -153,21 +181,18 @@
     </div>
   </div>
 
-  <!-- MODAL: CREAR NOTA / SÚPER -->
+  <!-- MODAL: CREAR NOTA -->
   <div id="modal-nota" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
     <div class="bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl space-y-4">
       <h3 class="text-lg font-bold text-slate-800">📝 Agregar Nota / Pizarra</h3>
-      
       <div>
         <label class="text-xs font-bold text-slate-600">Título:</label>
         <input type="text" id="nota-titulo" placeholder="Ej. Compras del Súper" class="w-full mt-1 p-2.5 border rounded-xl text-sm">
       </div>
-
       <div>
         <label class="text-xs font-bold text-slate-600">Contenido:</label>
         <textarea id="nota-contenido" rows="3" placeholder="Ej. Leche, huevos, fruta..." class="w-full mt-1 p-2.5 border rounded-xl text-sm"></textarea>
       </div>
-
       <div class="flex justify-end gap-2 pt-2">
         <button onclick="cerrarModalNota()" class="px-4 py-2 text-xs font-bold text-slate-500 hover:bg-slate-100 rounded-xl">Cancelar</button>
         <button onclick="guardarNotaWeb()" class="px-4 py-2 text-xs font-bold bg-purple-600 text-white rounded-xl shadow hover:bg-purple-700">Publicar Nota</button>
@@ -176,20 +201,21 @@
   </div>
 
   <script>
-    // URL de Apps Script sincronizada
-    const API_URL = "https://script.google.com/macros/s/AKfycbzTve2A-ZCd-nSrExt0Xaq7u7nHzSLy40UgNTUBNT-_XVbkYv15fxKrjohezHacf9M9Nw/exec";
+    // URL de Apps Script sincronizada con tu último despliegue
+    const API_URL = "https://script.google.com/macros/s/AKfycbwtw4Ox950LWkdUTOiOxVfvqKgO4eXGTDMV05CKHXbzY5eldQSSpyBl3f5d5JG37NuJDw/exec";
 
     const integrantesDefault = [
       { id: 1, nombre: "Verónica", rol: "Adulto", avatar: "👩‍👧", puntos: 0 },
       { id: 2, nombre: "Alejandra", rol: "Adulto", avatar: "👩", puntos: 0 },
       { id: 3, nombre: "Alberto", rol: "Adulto", avatar: "👨", puntos: 0 },
       { id: 4, nombre: "Julián", rol: "Adulto", avatar: "🧑‍💻", puntos: 0 },
-      { id: 5, nombre: "Liam", rol: "Niño", avatar: "👦", puntos: 0 },
-      { id: 6, nombre: "Manuel", rol: "Niño", avatar: "🧒", puntos: 0 }
+      { id: 5, nombre: "Esperanza", rol: "Adulto", avatar: "👵", puntos: 0 },
+      { id: 6, nombre: "Liam", rol: "Niño", avatar: "👦", puntos: 0 },
+      { id: 7, nombre: "Manuel", rol: "Niño", avatar: "🧒", puntos: 0 }
     ];
 
     let usuarioActual = null;
-    let datosServidor = { tareas: [], notas: [], integrantes: [] };
+    let datosServidor = { tareas: [], notas: [], integrantes: [], recompensas: [] };
 
     function inicializar() {
       renderUsuarios();
@@ -240,6 +266,7 @@
           if (data.tareas) datosServidor.tareas = data.tareas;
           if (data.notas) datosServidor.notas = data.notas;
           if (data.integrantes) datosServidor.integrantes = data.integrantes;
+          if (data.recompensas) datosServidor.recompensas = data.recompensas;
           renderPantallas();
         }
       } catch (err) {
@@ -253,6 +280,7 @@
       const puntosTotal = intBD ? intBD.PuntosAcumulados : usuarioActual.puntos;
       document.getElementById("user-puntos").innerText = `⭐ ${puntosTotal} Puntos`;
 
+      // 1. TAREAS
       const listaTareas = document.getElementById("lista-mis-tareas");
       const misTareas = datosServidor.tareas.filter(t => t.Asignado_A === usuarioActual.nombre && t.Estado !== "Completada");
 
@@ -281,18 +309,28 @@
         `).join("");
       }
 
+      // 2. TABLÓN / RANKING
       const tablon = document.getElementById("tablon-familia");
-      tablon.innerHTML = integrantesDefault.map(member => {
+      const integrantesOrdenados = [...integrantesDefault].sort((a,b) => {
+        const ptsA = (datosServidor.integrantes.find(i => i.Nombre === a.nombre) || {}).PuntosAcumulados || 0;
+        const ptsB = (datosServidor.integrantes.find(i => i.Nombre === b.nombre) || {}).PuntosAcumulados || 0;
+        return ptsB - ptsA;
+      });
+
+      tablon.innerHTML = integrantesOrdenados.map((member, index) => {
         const tareasMiembro = datosServidor.tareas.filter(t => t.Asignado_A === member.nombre && t.Estado !== "Completada");
         const datosMiembroBD = datosServidor.integrantes.find(i => i.Nombre === member.nombre);
         const pts = datosMiembroBD ? datosMiembroBD.PuntosAcumulados : 0;
+        const medalla = index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : `#${index + 1}`;
+
         return `
           <div class="bg-white p-3 rounded-2xl shadow-sm border border-slate-100 flex justify-between items-center">
             <div class="flex items-center gap-3">
+              <span class="text-lg font-black w-6 text-center text-slate-400">${medalla}</span>
               <span class="text-2xl">${member.avatar}</span>
               <div>
                 <p class="font-bold text-sm text-slate-800">${member.nombre}</p>
-                <p class="text-[11px] text-slate-400">${tareasMiembro.length} tareas pendientes</p>
+                <p class="text-[11px] text-slate-400">${tareasMiembro.length} pendientes</p>
               </div>
             </div>
             <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-xl">⭐ ${pts} pts</span>
@@ -300,6 +338,25 @@
         `;
       }).join("");
 
+      // 3. TIENDA DE RECOMPENSAS
+      const contRecs = document.getElementById("contenedor-recompensas");
+      if (datosServidor.recompensas.length === 0) {
+        contRecs.innerHTML = `<p class="text-xs text-slate-400 text-center col-span-2 py-6">No hay premios en el catálogo.</p>`;
+      } else {
+        contRecs.innerHTML = datosServidor.recompensas.map(r => `
+          <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex justify-between items-center">
+            <div>
+              <p class="font-bold text-slate-800 text-sm">${r.Nombre}</p>
+              <p class="text-xs font-bold text-amber-500 mt-1">⭐ ${r.Costo_Puntos} Puntos</p>
+            </div>
+            <button onclick="canjearPremios('${r.Nombre}', ${r.Costo_Puntos})" class="bg-amber-500 hover:bg-amber-600 text-white font-bold px-3 py-1.5 rounded-xl text-xs shadow transition">
+              Canjear
+            </button>
+          </div>
+        `).join("");
+      }
+
+      // 4. NOTAS
       const contenedorNotas = document.getElementById("contenedor-notas");
       if (datosServidor.notas.length === 0) {
         contenedorNotas.innerHTML = `<p class="text-xs text-slate-400 text-center col-span-2 py-6">No hay notas publicadas.</p>`;
@@ -337,20 +394,52 @@
       }
     }
 
-    // MODALES
+    async function canjearPremios(nombreRecompensa, costo) {
+      const intBD = datosServidor.integrantes.find(i => i.Nombre === usuarioActual.nombre);
+      const puntosTotal = intBD ? intBD.PuntosAcumulados : 0;
+
+      if (puntosTotal < costo) {
+        return alert(`Puntos insuficientes. Necesitas ${costo} pts y tienes ${puntosTotal} pts.`);
+      }
+
+      if (confirm(`¿Quieres canjear "${nombreRecompensa}" por ${costo} puntos?`)) {
+        await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({
+            action: "canjearRecompensa",
+            usuario: usuarioActual.nombre,
+            nombreRecompensa: nombreRecompensa,
+            costo: costo
+          })
+        });
+        alert("🎉 ¡Canje realizado con éxito! Disfruta tu premio.");
+        await cargarDatosServidor();
+      }
+    }
+
     function abrirModalTarea() { document.getElementById("modal-tarea").classList.remove("hidden"); }
     function cerrarModalTarea() { document.getElementById("modal-tarea").classList.add("hidden"); }
     function abrirModalNota() { document.getElementById("modal-nota").classList.remove("hidden"); }
     function cerrarModalNota() { document.getElementById("modal-nota").classList.add("hidden"); }
 
+    function seleccionarTareaPreset(select) {
+      if (select.value) {
+        document.getElementById("tarea-nombre").value = select.value;
+      }
+    }
+
     async function guardarTareaWeb() {
-      const nombre = document.getElementById("tarea-nombre").value;
+      const nombreInput = document.getElementById("tarea-nombre").value;
+      const selectPreset = document.getElementById("select-tarea-predefinida").value;
+      const nombre = nombreInput || selectPreset;
+
       const asignadoA = document.getElementById("tarea-asignado").value;
       const prioridad = document.getElementById("tarea-prioridad").value;
       const horario = document.getElementById("tarea-horario").value;
       const puntos = document.getElementById("tarea-puntos").value;
 
-      if (!nombre) return alert("Por favor escribe el nombre de la tarea.");
+      if (!nombre) return alert("Por favor selecciona o escribe el nombre de la tarea.");
 
       await fetch(API_URL, {
         method: "POST",
@@ -366,6 +455,7 @@
       });
 
       document.getElementById("tarea-nombre").value = "";
+      document.getElementById("select-tarea-predefinida").value = "";
       cerrarModalTarea();
       await cargarDatosServidor();
     }
