@@ -99,7 +99,7 @@
         <div id="lista-premios" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
       </section>
 
-      <!-- SECCIÓN 5: DESPENSA (GLOBAL / TODOS LOS PERFILES) -->
+      <!-- SECCIÓN 5: DESPENSA -->
       <section id="sec-despensa" class="hidden space-y-4">
         <div class="flex justify-between items-center">
           <h3 class="text-xl font-black text-slate-700">🛒 Despensa y Súper Compartido</h3>
@@ -111,7 +111,7 @@
         <div id="lista-despensa" class="space-y-2"></div>
       </section>
 
-      <!-- SECCIÓN 6: CUENTAS Y PAGOS (CON BOTONES PENDIENTE / PAGADO) -->
+      <!-- SECCIÓN 6: CUENTAS -->
       <section id="sec-cuentas" class="hidden space-y-4">
         <div class="flex justify-between items-center">
           <h3 class="text-xl font-black text-slate-700">💳 Cuentas y Recibos</h3>
@@ -217,14 +217,20 @@
   </div>
 
   <script>
-    // URL limpia vinculada al nuevo proyecto de Apps Script
-    const API_URL = "https://script.google.com/macros/s/AKfycbz8r9wimH-mNM_5DWeM3yNUgorrvqF_hrLZYzzjtSNiMdO98MCoWm7MOcXMG00Tc4NT/exec";
+    // URL de tu Apps Script actual sincronizada
+    const API_URL = "https://script.google.com/macros/s/AKfycbyG4_UgsqE6QPWY1AaimXz8i-OIYxivAuXPvOdn3wHErl92wYZB5Eudh5j4SLqAtV39/exec";
 
     let usuarioActual = null;
     let datosApp = { integrantes: [], tareas: [], notas: [], despensa: [], cuentas: [], recompensas: [] };
     let filtroCuentasActual = "Pendiente";
 
     window.onload = async function() {
+      let versionApp = "v3_robust";
+      if (localStorage.getItem("hogar_version") !== versionApp) {
+        localStorage.clear();
+        localStorage.setItem("hogar_version", versionApp);
+      }
+
       let cached = localStorage.getItem("hogar_datos_cache");
       if (cached) {
         datosApp = JSON.parse(cached);
