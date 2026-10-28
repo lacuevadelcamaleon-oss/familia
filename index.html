@@ -51,33 +51,55 @@
         </div>
       </section>
 
-      <!-- SECCIÓN 2: FAMILIA / RANKING Y HORARIOS -->
-      <section id="sec-familia" class="hidden space-y-4">
-        <h3 class="text-xl font-black text-slate-700">Pizarra Familiar & Horarios</h3>
-        <div class="bg-white p-4 rounded-2xl border shadow-sm space-y-3">
-          <h4 class="font-bold text-xs text-slate-600">⏰ Personalizar mi Horario de Disponibilidad:</h4>
-          <div class="grid grid-cols-2 gap-3">
+      <!-- SECCIÓN 2: HORARIOS (PESTAÑA DEDICADA) -->
+      <section id="sec-horarios" class="hidden space-y-4">
+        <h3 class="text-xl font-black text-slate-700">⏰ Gestión de Horarios en Casa</h3>
+        <p class="text-xs text-slate-500">Configura las horas en las que estarás fuera y en casa para una mejor distribución:</p>
+        
+        <div class="bg-white p-6 rounded-3xl border shadow-sm space-y-4 max-w-lg mx-auto">
+          <div class="flex items-center gap-3 pb-3 border-b border-slate-100">
+            <span id="horario-user-avatar" class="text-4xl">👤</span>
             <div>
-              <label class="text-[10px] text-slate-400 font-bold">Salida / Ocupado:</label>
-              <input type="time" id="input-h-salida" class="w-full p-2 border rounded-xl text-xs">
-            </div>
-            <div>
-              <label class="text-[10px] text-slate-400 font-bold">Regreso / Libre:</label>
-              <input type="time" id="input-h-regreso" class="w-full p-2 border rounded-xl text-xs">
+              <h4 id="horario-user-nombre" class="font-bold text-base text-slate-800">Usuario</h4>
+              <p class="text-xs text-slate-400">Define tu disponibilidad diaria</p>
             </div>
           </div>
-          <button onclick="guardarMiHorario()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold py-2 rounded-xl shadow">Guardar Mi Horario</button>
+
+          <div class="space-y-3">
+            <div>
+              <label class="text-xs font-bold text-slate-600">🚪 Hora de Salida (Fuera de casa):</label>
+              <input type="time" id="input-h-salida" class="w-full mt-1 p-3 border rounded-xl text-sm bg-slate-50 font-bold text-slate-700">
+            </div>
+            <div>
+              <label class="text-xs font-bold text-slate-600">🏠 Hora de Regreso (En casa / Libre):</label>
+              <input type="time" id="input-h-regreso" class="w-full mt-1 p-3 border rounded-xl text-sm bg-slate-50 font-bold text-slate-700">
+            </div>
+          </div>
+
+          <button onclick="guardarMiHorario()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl shadow transition text-sm">
+            💾 Guardar Mi Horario
+          </button>
         </div>
+
+        <div class="pt-4">
+          <h4 class="font-bold text-sm text-slate-600 mb-3">📋 Horarios de toda la familia:</h4>
+          <div id="lista-horarios-familia" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+        </div>
+      </section>
+
+      <!-- SECCIÓN 3: FAMILIA / RANKING -->
+      <section id="sec-familia" class="hidden space-y-4">
+        <h3 class="text-xl font-black text-slate-700">🏆 Pizarra Familiar & Puntos</h3>
         <div id="lista-familia" class="space-y-3"></div>
       </section>
 
-      <!-- SECCIÓN 3: TIENDA DE PREMIOS -->
+      <!-- SECCIÓN 4: TIENDA DE PREMIOS -->
       <section id="sec-premios" class="hidden space-y-4">
         <h3 class="text-xl font-black text-slate-700">🎁 Tienda de Recompensas</h3>
         <div id="lista-premios" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
       </section>
 
-      <!-- SECCIÓN 4: DESPENSA -->
+      <!-- SECCIÓN 5: DESPENSA -->
       <section id="sec-despensa" class="hidden space-y-4">
         <div class="flex justify-between items-center">
           <h3 class="text-xl font-black text-slate-700">🛒 Despensa y Súper</h3>
@@ -88,7 +110,7 @@
         <div id="lista-despensa" class="space-y-2"></div>
       </section>
 
-      <!-- SECCIÓN 5: CUENTAS -->
+      <!-- SECCIÓN 6: CUENTAS -->
       <section id="sec-cuentas" class="hidden space-y-4">
         <div class="flex justify-between items-center">
           <h3 class="text-xl font-black text-slate-700">💳 Cuentas y Recibos</h3>
@@ -99,7 +121,7 @@
         <div id="lista-cuentas" class="space-y-2"></div>
       </section>
 
-      <!-- SECCIÓN 6: NOTAS -->
+      <!-- SECCIÓN 7: NOTAS -->
       <section id="sec-notas" class="hidden space-y-4">
         <div class="flex justify-between items-center">
           <h3 class="text-xl font-black text-slate-700">📝 Notas Compartidas</h3>
@@ -113,24 +135,27 @@
     </main>
 
     <!-- NAVBAR INFERIOR -->
-    <nav class="fixed bottom-0 left-0 right-0 max-w-4xl mx-auto bg-white border-t border-slate-200 flex justify-around py-3 text-center text-xs font-medium text-slate-500 z-40 shadow-lg">
+    <nav class="fixed bottom-0 left-0 right-0 max-w-4xl mx-auto bg-white border-t border-slate-200 flex justify-around py-2.5 text-center text-[11px] font-medium text-slate-500 z-40 shadow-lg">
       <button onclick="cambiarSeccion('sec-tareas', this)" class="nav-btn flex flex-col items-center text-indigo-600">
-        <i class="fa-solid fa-list-check text-xl mb-1"></i><span>Tareas</span>
+        <i class="fa-solid fa-list-check text-lg mb-0.5"></i><span>Tareas</span>
+      </button>
+      <button onclick="cambiarSeccion('sec-horarios', this)" class="nav-btn flex flex-col items-center hover:text-indigo-600">
+        <i class="fa-solid fa-clock text-lg mb-0.5"></i><span>Horarios</span>
       </button>
       <button onclick="cambiarSeccion('sec-familia', this)" class="nav-btn flex flex-col items-center hover:text-indigo-600">
-        <i class="fa-solid fa-trophy text-xl mb-1"></i><span>Familia</span>
+        <i class="fa-solid fa-trophy text-lg mb-0.5"></i><span>Familia</span>
       </button>
       <button onclick="cambiarSeccion('sec-premios', this)" class="nav-btn flex flex-col items-center hover:text-indigo-600">
-        <i class="fa-solid fa-gift text-xl mb-1"></i><span>Premios</span>
+        <i class="fa-solid fa-gift text-lg mb-0.5"></i><span>Premios</span>
       </button>
       <button onclick="cambiarSeccion('sec-despensa', this)" class="nav-btn flex flex-col items-center hover:text-indigo-600">
-        <i class="fa-solid fa-cart-shopping text-xl mb-1"></i><span>Despensa</span>
+        <i class="fa-solid fa-cart-shopping text-lg mb-0.5"></i><span>Despensa</span>
       </button>
       <button onclick="cambiarSeccion('sec-cuentas', this)" class="nav-btn flex flex-col items-center hover:text-indigo-600">
-        <i class="fa-solid fa-wallet text-xl mb-1"></i><span>Cuentas</span>
+        <i class="fa-solid fa-wallet text-lg mb-0.5"></i><span>Cuentas</span>
       </button>
       <button onclick="cambiarSeccion('sec-notas', this)" class="nav-btn flex flex-col items-center hover:text-indigo-600">
-        <i class="fa-solid fa-note-sticky text-xl mb-1"></i><span>Notas</span>
+        <i class="fa-solid fa-note-sticky text-lg mb-0.5"></i><span>Notas</span>
       </button>
     </nav>
   </div>
@@ -188,13 +213,12 @@
 
   <script>
     // URL actualizada de Google Apps Script
-    const API_URL = "https://script.google.com/macros/s/AKfycbz3wnB2KCmiOJN41HlltVBkT-IHeoU2-XXS2oPZIMBgtSJ9QlJXZohN-g01EAX56FVgsQ/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbzsllzFGQQjzUXFlMwNI5yc1Y0DKFzUZgvoxuU5kaDmF8J6x0s6BTuXvmoTILZfEkyHoQ/exec";
 
     let usuarioActual = null;
     let datosApp = { integrantes: [], tareas: [], notas: [], despensa: [], cuentas: [], recompensas: [] };
 
     window.onload = async function() {
-      // Carga instantánea desde caché local para evitar esperas
       let cached = localStorage.getItem("hogar_datos_cache");
       if (cached) {
         datosApp = JSON.parse(cached);
@@ -217,7 +241,7 @@
           }
         }
       } catch (e) {
-        console.warn("Error de conexión, usando datos locales", e);
+        console.warn("Error de red", e);
       }
     }
 
@@ -243,6 +267,8 @@
       document.getElementById("user-nombre").innerText = usuarioActual.Nombre;
       document.getElementById("user-avatar").innerText = usuarioActual.Avatar;
       
+      document.getElementById("horario-user-avatar").innerText = usuarioActual.Avatar;
+      document.getElementById("horario-user-nombre").innerText = usuarioActual.Nombre;
       document.getElementById("input-h-salida").value = usuarioActual.HoraSalida || "08:00";
       document.getElementById("input-h-regreso").value = usuarioActual.HoraRegreso || "18:00";
 
@@ -282,7 +308,19 @@
         `).join("");
       }
 
-      // 2. FAMILIA / RANKING
+      // 2. HORARIOS DE LA FAMILIA
+      let listHorarios = document.getElementById("lista-horarios-familia");
+      listHorarios.innerHTML = datosApp.integrantes.map(m => `
+        <div class="bg-white p-3 rounded-2xl border flex justify-between items-center text-xs shadow-sm">
+          <div class="flex items-center gap-2">
+            <span class="text-xl">${m.Avatar}</span>
+            <span class="font-bold text-slate-700">${m.Nombre}</span>
+          </div>
+          <span class="bg-slate-100 text-slate-600 font-bold px-2.5 py-1 rounded-xl">🚪 ${m.HoraSalida || '08:00'} ➔ 🏠 ${m.HoraRegreso || '18:00'}</span>
+        </div>
+      `).join("");
+
+      // 3. FAMILIA / RANKING
       let listF = document.getElementById("lista-familia");
       let ordenados = [...datosApp.integrantes].sort((a,b) => (b.PuntosAcumulados||0) - (a.PuntosAcumulados||0));
       listF.innerHTML = ordenados.map((m, idx) => `
@@ -292,14 +330,14 @@
             <span class="text-2xl">${m.Avatar}</span>
             <div>
               <p class="font-bold text-sm">${m.Nombre}</p>
-              <p class="text-[10px] text-slate-400">Horario: ${m.HoraSalida || '08:00'} - ${m.HoraRegreso || '18:00'}</p>
+              <p class="text-[10px] text-slate-400">Disponibilidad: ${m.HoraSalida || '08:00'} - ${m.HoraRegreso || '18:00'}</p>
             </div>
           </div>
           <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-xl">⭐ ${m.PuntosAcumulados || 0} pts</span>
         </div>
       `).join("");
 
-      // 3. PREMIOS
+      // 4. PREMIOS
       let listP = document.getElementById("lista-premios");
       listP.innerHTML = datosApp.recompensas.map(r => `
         <div class="bg-white p-4 rounded-2xl border shadow-sm flex justify-between items-center">
@@ -308,7 +346,7 @@
         </div>
       `).join("");
 
-      // 4. DESPENSA
+      // 5. DESPENSA
       let listD = document.getElementById("lista-despensa");
       let pendienteD = datosApp.despensa.filter(d => d.Estado !== "Comprado");
       listD.innerHTML = pendienteD.length === 0 ? `<p class="text-xs text-slate-400 text-center py-4">Despensa al día.</p>` : pendienteD.map(d => `
@@ -318,7 +356,7 @@
         </div>
       `).join("");
 
-      // 5. CUENTAS
+      // 6. CUENTAS
       let listC = document.getElementById("lista-cuentas");
       let pendienteC = datosApp.cuentas.filter(c => c.Estado !== "Pagado");
       listC.innerHTML = pendienteC.length === 0 ? `<p class="text-xs text-slate-400 text-center py-4">Sin cuentas pendientes.</p>` : pendienteC.map(c => `
@@ -328,7 +366,7 @@
         </div>
       `).join("");
 
-      // 6. NOTAS
+      // 7. NOTAS
       let gridN = document.getElementById("grid-notas");
       gridN.innerHTML = datosApp.notas.length === 0 ? `<p class="text-xs text-slate-400 text-center col-span-2 py-4">Sin notas.</p>` : datosApp.notas.map(n => `
         <div class="bg-amber-50 p-4 rounded-2xl border border-amber-200 shadow-sm">
